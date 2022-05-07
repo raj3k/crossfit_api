@@ -27,3 +27,7 @@ class Workout(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     trainer_tips = models.TextField(blank=True, null=True)
 
+    def __str__(self) -> str:
+        return self.name
+    
+
