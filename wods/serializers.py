@@ -2,49 +2,39 @@ from rest_framework import serializers
 from .models import Workout, Equipment, Exercise
 
 
+class ExerciseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Exercise
+        fields = ['content']
+
+
 class EquipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipment
         fields = ['name']
 
-
-class ExerciseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Exercise
-        fields = ['name']
-
-
-
+    
 class WorkoutSerializer(serializers.ModelSerializer):
-    # equipment = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='name'
-    # )
-
-    # exercises = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='name'
-    # )
+    workout_exercises = ExerciseSerializer(many=True)
     equipment = EquipmentSerializer(many=True)
-    exercises = ExerciseSerializer(many=True)
-
 
     class Meta:
         model = Workout
-        fields = ['id', 'name', 'mode', 'equipment', 'exercises', 'created_at', 'updated_at', 'trainer_tips']
+        fields = ['id', 'name', 'mode', 'equipment', 'workout_exercises' ,'created_at', 'updated_at', 'trainer_tips']
 
     def create(self, validated_data):
+        workout_exercises_data = validated_data.pop('workout_exercises')
         equipment_data = validated_data.pop('equipment')
-        exercises_data = validated_data.pop('exercises')
-        workout = Workout.objects.create(**validated_data)
-        for equipment in equipment_data:
-            workout.equipment.create(**equipment)
 
-        for exercise in exercises_data:
-            workout.exercises.create(**exercise)
-        return workout
+        workout_instance = Workout.objects.create(**validated_data)
+
+        for exercise in workout_exercises_data:
+            Exercise.objects.create(workout=workout_instance, **exercise)
+
+        for equipment in equipment_data:
+            if not Equipment.objects.filter(name__icontains=equipment['name']):
+                workout_instance.equipment.create(name=equipment['name'])
+            else:
+                workout_instance.equipment.add(Equipment.objects.get(name__icontains=equipment['name']))
         
-    def update(self, instance, validated_data):
-        pass
+        return workout_instance
