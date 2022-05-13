@@ -15,8 +15,8 @@ class Workout(models.Model):
     
 
 class Exercise(models.Model):
+    workout = models.ForeignKey(Workout, on_delete=models.CASCADE, related_name="workout_exercises")
     content = models.TextField()
-    workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.content
@@ -24,7 +24,7 @@ class Exercise(models.Model):
 
 class Equipment(models.Model):
     name = models.CharField(max_length=120)
-    workouts = models.ManyToManyField(Workout)
+    workouts = models.ManyToManyField(Workout, related_name="equipment")
 
     def __str__(self) -> str:
         return self.name
