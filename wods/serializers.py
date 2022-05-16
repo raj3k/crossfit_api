@@ -24,7 +24,6 @@ class WorkoutSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'mode', 'equipment', 'workout_exercises' ,'created_at', 'updated_at', 'trainer_tips']
 
     def create(self, validated_data: dict[Any]) -> Workout:
-        print(type(validated_data))
         workout_exercises_data: List(OrderedDict) = validated_data.pop('workout_exercises')
         equipment_data: List[OrderedDict] = validated_data.pop('equipment')
 
