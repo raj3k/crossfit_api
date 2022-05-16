@@ -5,6 +5,9 @@ from .serializers import WorkoutSerializer
 
 
 class WorkoutListAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    """
+    List all Workout instances and create new Workout instance.
+    """
     queryset = Workout.objects.all()
     serializer_class = WorkoutSerializer
 
@@ -18,8 +21,12 @@ class WorkoutDetailAPIView(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
+    """
+    Retrieve, update and delete Workout instance.
+    """
     queryset = Workout.objects.all()
     serializer_class = WorkoutSerializer
+    lookup_field = 'pk'
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
