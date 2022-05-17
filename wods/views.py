@@ -1,7 +1,7 @@
-from rest_framework import generics
-from rest_framework import mixins
+from rest_framework import generics, permissions, authentication
 from .models import Workout, Equipment, Exercise
 from .serializers import WorkoutSerializer
+from .permissions import IsWorkoutsMaintenancePermission
 
 
 class WorkoutListAPIView(generics.ListCreateAPIView):
@@ -10,6 +10,8 @@ class WorkoutListAPIView(generics.ListCreateAPIView):
     """
     queryset = Workout.objects.all()
     serializer_class = WorkoutSerializer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAdminUser, IsWorkoutsMaintenancePermission]
 
 
 class WorkoutDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -19,5 +21,6 @@ class WorkoutDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Workout.objects.all()
     serializer_class = WorkoutSerializer
     lookup_field = 'pk'
-
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [IsWorkoutsMaintenancePermission]
 
