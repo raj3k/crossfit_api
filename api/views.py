@@ -1,15 +1,17 @@
-from django.forms.models import model_to_dict
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from wods.models import Workout
 from wods.serializers import WorkoutSerializer
+from rest_framework import generics
+from rest_framework import authentication
+from rest_framework import permissions
+from wods.permissions import IsWorkoutsMaintenancePermission
 
 
-
-@api_view(["GET"])
-def api_home(request):
-    instance = Workout.objects.all().order_by("?").first()
-    data = {}
-    if instance:
-        data = WorkoutSerializer(instance).data
-    return Response(data)
+# TODO: to be changed
+class WorkoutListAPIView(generics.ListCreateAPIView):
+    """
+    List all Workout instances and create new Workout instance.
+    """
+    queryset = Workout.objects.all()
+    serializer_class = WorkoutSerializer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAdminUser, IsWorkoutsMaintenancePermission]
