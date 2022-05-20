@@ -22,6 +22,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workout
         fields = ['id', 'name', 'mode', 'equipment', 'workout_exercises' ,'created_at', 'updated_at', 'trainer_tips']
+        read_only_fields = ['id']
 
     def create(self, validated_data: dict[Any]) -> Workout:
         workout_exercises_data: List(OrderedDict) = validated_data.pop('workout_exercises')
