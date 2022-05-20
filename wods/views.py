@@ -16,7 +16,7 @@ class WorkoutListAPIView(generics.ListCreateAPIView):
 
 class WorkoutDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     """
-    Retrieve, update, partialy update and delete Workout instance.
+    Retrieve, update, partial update and delete Workout instance.
     """
     queryset = Workout.objects.all()
     serializer_class = WorkoutSerializer
