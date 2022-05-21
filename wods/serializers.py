@@ -41,6 +41,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
         return workout_instance
 
     def update(self, instance: Workout, validated_data: dict[Any]):
+        # TODO: do poprawy
         workout_exercises_data: List[OrderedDict] = validated_data.pop('workout_exercises')
         equipment_data: List[OrderedDict] = validated_data.pop('equipment')
         workout_equipment_ids: List[int] = [e.equipment_id for e in instance.equipment.through.objects.filter(workout_id=instance.id)]
@@ -63,7 +64,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
                 e.delete()
 
         for exercise in workout_exercises_data:
-            if not instance.workout_exercises.filter(content__iexact=exercise['content']):
-                instance.workout_exercises.create(**exercise)
+            # if not instance.workout_exercises.filter(content__iexact=exercise['content']):
+            instance.workout_exercises.update_or_create(**exercise)
 
         return super().update(instance, validated_data)
